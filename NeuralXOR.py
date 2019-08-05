@@ -7,25 +7,27 @@ np.random.seed(10)
 trainingInputs = np.array([[0,1,0],[1,0,0],[1,1,0],[0,0,0],[0,1,1],[1,0,1],[0,0,1],[1,1,1]])
 trainingOutputs = np.array([[1,1,0,0,1,1,0,0]]).T
 
-layer1 = neuron_layer(10,3)
-layer2 = neuron_layer(1,10)
 
+myNetwork = NeuralNetwork([3,20,10,1])
 
-myNetwork = NeuralNetwork([layer1,layer2])
+n = 100000
+t = 0.01
 
-n = 10000
-
-#myNetwork.printSynapticWeights()
-myNetwork.train(trainingInputs,trainingOutputs,n)
+myNetwork.printSynapticWeights()
+#myNetwork.train(trainingInputs[:4],trainingOutputs[:4],n)
+n = myNetwork.trainByAccuracy(trainingInputs[:4],trainingOutputs[:4],t)
+#myNetwork.train(trainingInputs,trainingOutputs,n)
 print("\n"*20)
 print("Trained",n,"times")
-#myNetwork.printSynapticWeights()
+myNetwork.printSynapticWeights()
 
 newInput = np.array(([1,1,1]))
 
 print("\n"*2)
 print("Expected outputs: ")
-print(trainingOutputs)
+print(trainingOutputs[:4])
 print("Actual outputs:")
-print(myNetwork.get(trainingInputs))
-#input()
+print(myNetwork.get(trainingInputs[:4]))
+print("Test")
+print(myNetwork.test(trainingInputs[4:],trainingOutputs[4:]))
+input()
