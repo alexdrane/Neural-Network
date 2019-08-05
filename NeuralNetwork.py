@@ -7,9 +7,8 @@ class neuron_layer():
         self.synapticWeights = 2* np.random.random((inputsCount,neuronCount))-1
 
 class NeuralNetwork():
-    def __init__(self, layer1, layer2):
-        self.layer1 = layer1
-        self.layer2 = layer2
+    def __init__(self, layers):
+        self.layers = layers
 
     def sigmoid(self,x):
         return 1/ (1+np.exp(-x))
@@ -19,29 +18,53 @@ class NeuralNetwork():
 
     def train(self, trainingInputs, trainingOutputs, count):
         for i  in range(count):
-            output1,output2 = self.think(trainingInputs)
+            output = self.think(trainingInputs)
 
-            layer2err = trainingOutputs-output2
+            lastlayererr = trainingOutputs-output[-1]
             #print(len(output2))
-            layer2delta = layer2err*self.sigmoid_derivative(output2)
+            lastLayerDelta = lastlayererr*self.sigmoid_derivative(output[-1])
 
             #print(layer2delta)
+            layerDeltas = []
+            for i in range(len(self.layers)):
+                layerDeltas.append(0)
+            layerDeltas[-1] = lastLayerDelta
+            #print(layerDeltas[0])
+            l = len(self.layers)
+            for i in range(2,l+1):
+                #print(layerDeltas[-(i)])
+                layererr = layerDeltas[l-i+1].dot(self.layers[l-i+1].synapticWeights.T)
+                layerdelta = layererr * self.sigmoid_derivative(output[l-i])
+                layerDeltas[-i] = layerdelta
 
-            layer1err = layer2delta.dot(self.layer2.synapticWeights.T)
-            layer1delta = layer1err * self.sigmoid_derivative(output1)
+            #print(layerDeltas)
 
-            layer1adjust = trainingInputs.T.dot(layer1delta)
-            layer2adjust = output1.T.dot(layer2delta)
-
-            self.layer1.synapticWeights += layer1adjust
-            self.layer2.synapticWeights += layer2adjust
+            for i in range(len(self.layers)):
+                if i > 0:
+                    self.layers[i].synapticWeights += output[i-1].T.dot(layerDeltas[i])
+                else:
+            #        print(layerDeltas[i+1])
+            #        print(trainingInputs.T)
+                    self.layers[i].synapticWeights += trainingInputs.T.dot(layerDeltas[i])
 
 
     def think(self,inputs):
-        layer1out = self.sigmoid(np.dot(inputs,self.layer1.synapticWeights))
-        layer2out = self.sigmoid(np.dot(layer1out,self.layer2.synapticWeights))
-        return layer1out, layer2out
+        outs = []
+        ran = False
+        for layer in self.layers:
+         #print(layer.synapticWeights)
+            if ran:
+                new = self.sigmoid(np.dot(prev,layer.synapticWeights))
+            else:
+                ran = True
+                new = self.sigmoid(np.dot(inputs,layer.synapticWeights))
+            prev = new
+            outs.append(new)
+        return outs
 
-    def printSynapticWeights(self):
-        print("Layer 1)",self.layer1.synapticWeights)
-        print("Layer 2)",self.layer2.synapticWeights)
+    def get(self,inputs):
+        return self.think(inputs)[len(self.layers)-1]
+
+#    def printSynapticWeights(self):
+    #    print("Layer 1)",self.layer1.synapticWeights)
+    #    print("Layer 2)",self.layer2.synapticWeights)
