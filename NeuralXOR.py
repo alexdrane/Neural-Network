@@ -2,13 +2,13 @@
 from NeuralNetwork import *
 import numpy as np
 
-np.random.seed(10)
+#np.random.seed(10)
 
 trainingInputs = np.array([[0,1,0],[1,0,0],[1,1,0],[0,0,0],[0,1,1],[1,0,1],[0,0,1],[1,1,1]])
 trainingOutputs = np.array([[1,1,0,0,1,1,0,0]]).T
 
 
-myNetwork = NeuralNetwork([3,20,10,1])
+myNetwork = NeuralNetwork([3,20,20,1])
 
 n = 100000
 t = 0.01
@@ -30,4 +30,5 @@ print("Actual outputs:")
 print(myNetwork.get(trainingInputs[:4]))
 print("Test")
 print(myNetwork.test(trainingInputs[4:],trainingOutputs[4:]))
+myNetwork.write("XORnetwork.txt")
 input()

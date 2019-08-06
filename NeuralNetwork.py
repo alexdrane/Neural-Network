@@ -2,6 +2,8 @@
 
 import numpy as np
 
+def loadFromFile(fileName):
+    pass
 
 class neuron_layer():
     def __init__(self, neuronCount, inputsCount):
@@ -22,6 +24,18 @@ class NeuralNetwork():
     def train(self, trainingInputs, trainingOutputs, count):
         for i in range(count):
             self.train_iteration(trainingInputs, trainingOutputs)
+
+    def write(self,fileName):
+        file = open(fileName,"w")
+        for layer in self.layers:
+            file.write("{")
+            for i in layer.synapticWeights:
+                file.write("[")
+                for j in i:
+                    file.write(str(j)+",")
+                file.write("]")
+            file.write("}")
+
 
     def trainByAccuracy(self, trainingInputs, trainingOutputs, threshold):
         count = 0
