@@ -1,6 +1,7 @@
 # Neural Network class
 
 import numpy as np
+import json
 
 def loadFromFile(fileName):
     pass
@@ -14,6 +15,18 @@ class NeuralNetwork():
         self.layers = []
         for i in range(len(neuronLayers)-1):
             self.layers.append(neuron_layer(neuronLayers[i+1],neuronLayers[i]))
+
+    def loadFromJson(self,name):
+        with open(name) as json_file:
+            data = json.load(json_file)['network']
+            i = 0
+            self.layers = []
+            for layer in data['layers']:
+                self.layers.append(neuron_layer(2,2))
+            for layer in data['layers']:
+                layer = np.array(layer)
+                self.layers[i].synapticWeights = layer
+                i+=1
 
     def sigmoid(self,x):
         return 1/ (1+np.exp(-x))
@@ -42,6 +55,7 @@ class NeuralNetwork():
         while self.test(trainingInputs, trainingOutputs) > threshold:
             self.train_iteration(trainingInputs, trainingOutputs)
             count += 1
+            #print(count)
         return count
 
 
